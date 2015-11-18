@@ -9,24 +9,24 @@ import android.text.TextUtils;
 /**
  * Created by 37X21=777 on 15/9/24.
  */
-public final class CacheManager {
+public final class EasyCacheManager {
 
-    private static volatile CacheManager manager;
+    private static volatile EasyCacheManager manager;
     private Context mContext;
     private CacheProxy cacheProxy;
 
-    public static CacheManager getInstance() {
+    public static EasyCacheManager getInstance() {
         if (manager == null) {
-            synchronized (CacheManager.class) {
+            synchronized (EasyCacheManager.class) {
                 if (manager == null) {
-                    manager = new CacheManager();
+                    manager = new EasyCacheManager();
                 }
             }
         }
         return manager;
     }
 
-    private CacheManager() {
+    private EasyCacheManager() {
         super();
         cacheProxy=new CacheProxy();
     }
