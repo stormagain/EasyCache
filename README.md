@@ -3,6 +3,7 @@ A SharedPreferences storage framework based on Java dynamic proxy
 
 # Example
 Step1:设置Context
+
     public class EasyCacheApplication extends Application {
 
         @Override
@@ -13,6 +14,7 @@ Step1:设置Context
     }
 
 Step2:代理接口：
+
     @EasySpCache(name = "example_sp")
     public interface ExampleProxy {
 
@@ -25,6 +27,7 @@ Step2:代理接口：
     }
 
 Step3:存储或读取
+
     Student student=new Student();
     student.name="zhangsan";
     student.age=18;
