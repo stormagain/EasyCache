@@ -1,5 +1,7 @@
 package com.stormagain.easycache;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 
 /**
@@ -22,6 +24,10 @@ final class Utils {
         // No instances.
     }
 
-    public static Gson gson=new Gson();
+    public static Gson gson = new Gson();
+
+    public static void logError(String msg) {
+        Log.e("EasyCache:", msg);
+    }
 }
 

@@ -1,6 +1,8 @@
 package com.stormagain.example;
 
 import com.stormagain.easycache.Cache;
+import com.stormagain.easycache.Clear;
+import com.stormagain.easycache.RemoveKey;
 import com.stormagain.easycache.EasySpCache;
 import com.stormagain.easycache.Key;
 import com.stormagain.easycache.LoadCache;
@@ -15,7 +17,13 @@ public interface ExampleProxy {
     @Cache
     void cacheStudent(@Key(value = "student") Student student);
 
-    @LoadCache(key = "student",getClassType = Student.class)
+    @LoadCache(key = "student", getClassType = Student.class)
     Student loadStudent();
+
+    @RemoveKey(key = "student")
+    void removeStudent();
+
+    @Clear
+    void clearExample();
 
 }

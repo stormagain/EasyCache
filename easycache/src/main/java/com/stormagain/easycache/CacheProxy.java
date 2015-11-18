@@ -50,6 +50,11 @@ public final class CacheProxy {
                             }
                         }
                     }
+                } else if (annotationType == RemoveKey.class) {
+                    String key = ((RemoveKey) methodAnnotation).key();
+                    EasyCacheManager.getInstance().removeKey(name, key);
+                }else if(annotationType ==Clear.class){
+                    EasyCacheManager.getInstance().clear(name);
                 }
             }
             return null;

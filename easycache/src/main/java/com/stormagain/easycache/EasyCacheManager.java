@@ -28,7 +28,7 @@ public final class EasyCacheManager {
 
     private EasyCacheManager() {
         super();
-        cacheProxy=new CacheProxy();
+        cacheProxy = new CacheProxy();
     }
 
     public void setup(Context context) {
@@ -38,33 +38,38 @@ public final class EasyCacheManager {
     }
 
     public void cache(String name, String key, String t) {
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences(name, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(name, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(key, t);
         apply(editor);
     }
 
     public <T> T loadCache(String name, String key, Class<T> clazz) {
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences(name, Context.MODE_PRIVATE);
-        String data = sharedPreferences.getString(key, "");
-        if (!TextUtils.isEmpty(data)) {
-            return Utils.gson.fromJson(data, clazz);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(name, Context.MODE_PRIVATE);
+        if (sharedPreferences.contains(key)) {
+            String data = sharedPreferences.getString(key, "");
+            if (!TextUtils.isEmpty(data)) {
+                return Utils.gson.fromJson(data, clazz);
+            }
+        } else {
+            Utils.logError("The specified key:" + key + " is not found");
         }
         return null;
     }
 
-
-    public String getCacheName(Class<?> clazz) {
-        if (clazz.getAnnotation(EasySpCache.class) != null) {
-            EasySpCache easySpCache = clazz.getAnnotation(EasySpCache.class);
-            return easySpCache.name();
+    public void removeKey(String name, String key) {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(name, Context.MODE_PRIVATE);
+        if (sharedPreferences.contains(key)) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove(key);
+            apply(editor);
         } else {
-            return clazz.getSimpleName();
+            Utils.logError("The specified key:" + key + " is not found");
         }
     }
 
     public void clear(String name) {
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences(name, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(name, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
         apply(editor);
@@ -75,16 +80,21 @@ public final class EasyCacheManager {
         clear(name);
     }
 
+    public String getCacheName(Class<?> clazz) {
+        if (clazz.getAnnotation(EasySpCache.class) != null) {
+            EasySpCache easySpCache = clazz.getAnnotation(EasySpCache.class);
+            return easySpCache.name();
+        } else {
+            return clazz.getSimpleName();
+        }
+    }
+
     private void apply(SharedPreferences.Editor editor) {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
             editor.apply();
         } else {
             editor.commit();
         }
-    }
-
-    private Context getContext() {
-        return mContext;
     }
 
     public CacheProxy getCacheProxy() {
