@@ -16,7 +16,6 @@ public final class CacheProxy {
                 new CacheHandler(service));
     }
 
-
     private class CacheHandler implements InvocationHandler {
 
         private Class<?> service;
