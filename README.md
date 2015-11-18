@@ -41,4 +41,5 @@ Step3:存储或读取
 
 # Attention
 To use this library, you need to add a GSON dependency
+
 ex:compile 'com.google.code.gson:gson:2.2.4'
