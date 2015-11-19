@@ -81,12 +81,15 @@ public final class EasyCacheManager {
     }
 
     public String getCacheName(Class<?> clazz) {
+        String name = "";
         if (clazz.getAnnotation(EasySpCache.class) != null) {
             EasySpCache easySpCache = clazz.getAnnotation(EasySpCache.class);
-            return easySpCache.name();
-        } else {
-            return clazz.getSimpleName();
+            name = easySpCache.name();
         }
+        if (TextUtils.isEmpty(name)) {
+            name = clazz.getSimpleName();
+        }
+        return name;
     }
 
     private void apply(SharedPreferences.Editor editor) {
