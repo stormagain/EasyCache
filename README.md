@@ -1,5 +1,5 @@
 # EasyCache
-A SharedPreferences storage framework based on Java dynamic proxy
+A SharedPreferences storage framework based on Java dynamic proxy for Android
 
 # Example
 Step1:设置Context
