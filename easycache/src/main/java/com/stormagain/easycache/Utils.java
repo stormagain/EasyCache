@@ -10,12 +10,12 @@ import com.google.gson.Gson;
 
 final class Utils {
 
-    static <T> void validateServiceClass(Class<T> service) {
-        if (!service.isInterface()) {
+    static <T> void validateClass(Class<T> clazz) {
+        if (!clazz.isInterface()) {
             throw new IllegalArgumentException("Only interface endpoint definitions are supported.");
         }
 
-        if (service.getInterfaces().length > 0) {
+        if (clazz.getInterfaces().length > 0) {
             throw new IllegalArgumentException("Interface definitions must not extend other interfaces.");
         }
     }

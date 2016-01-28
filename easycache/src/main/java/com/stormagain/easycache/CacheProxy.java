@@ -10,20 +10,20 @@ import java.lang.reflect.Proxy;
  */
 public final class CacheProxy {
 
-    public <T> T create(Class<T> service) {
-        Utils.validateServiceClass(service);
-        return (T) Proxy.newProxyInstance(service.getClassLoader(), new Class<?>[]{service},
-                new CacheHandler(service));
+    public <T> T create(Class<T> clazz) {
+        Utils.validateClass(clazz);
+        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz},
+                new CacheHandler(clazz));
     }
 
     private class CacheHandler implements InvocationHandler {
 
-        private Class<?> service;
+        private Class<?> clazz;
         private String name;
 
-        public CacheHandler(Class<?> service) {
-            this.service = service;
-            this.name = EasyCacheManager.getInstance().getCacheName(this.service);
+        public CacheHandler(Class<?> clazz) {
+            this.clazz = clazz;
+            this.name = EasyCacheManager.getInstance().getCacheName(this.clazz);
         }
 
         @Override
