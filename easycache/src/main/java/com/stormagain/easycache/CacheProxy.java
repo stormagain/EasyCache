@@ -33,7 +33,11 @@ public final class CacheProxy {
                 if (annotationType == LoadCache.class) {
                     String key = ((LoadCache) methodAnnotation).key();
                     Class clazz = ((LoadCache) methodAnnotation).getClassType();
-                    return EasyCacheManager.getInstance().loadCache(name, key, clazz);
+                    if (clazz.isArray()) {
+                        return EasyCacheManager.getInstance().loadListCache(name, key, clazz);
+                    } else {
+                        return EasyCacheManager.getInstance().loadCache(name, key, clazz);
+                    }
                 } else if (annotationType == Cache.class) {
                     Annotation[][] parameterAnnotationArrays = method.getParameterAnnotations();
                     if (parameterAnnotationArrays.length > 0) {

@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.text.TextUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by 37X21=777 on 15/9/24.
@@ -50,6 +52,24 @@ public final class EasyCacheManager {
             String data = sharedPreferences.getString(key, "");
             if (!TextUtils.isEmpty(data)) {
                 return Utils.gson.fromJson(data, clazz);
+            }
+        } else {
+            Utils.logError("The specified key:" + key + " is not found");
+        }
+        return null;
+    }
+
+    public <T> List<T> loadListCache(String name, String key, Class<T[]> clazz) {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(name, Context.MODE_PRIVATE);
+        if (sharedPreferences.contains(key)) {
+            String data = sharedPreferences.getString(key, "");
+            if (!TextUtils.isEmpty(data)) {
+                T[] arr = Utils.gson.fromJson(data, clazz);
+                List<T> arrayList = new ArrayList<>();
+                for (T t : arr) {
+                    arrayList.add(t);
+                }
+                return arrayList;
             }
         } else {
             Utils.logError("The specified key:" + key + " is not found");

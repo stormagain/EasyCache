@@ -6,12 +6,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.stormagain.easycache.EasyCacheManager;
 import com.stormagain.easycache.R;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,16 +34,31 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Example
-        Student student=new Student();
-        student.name="zhangsan";
-        student.age=18;
+        Student student = new Student();
+        student.name = "zhangsan";
+        student.age = 18;
 
-        ExampleProxy exampleProxy= EasyCacheManager.getInstance().getCacheProxy().create(ExampleProxy.class);
+        Student student1 = new Student();
+        student1.name = "lisi";
+        student1.age = 20;
+
+        ExampleProxy exampleProxy = EasyCacheManager.getInstance().getCacheProxy().create(ExampleProxy.class);
         //cache
         exampleProxy.cacheStudent(student);
         //loadCache
-        Student cachedStudent=exampleProxy.loadStudent();
-        Log.d("Student","student:"+cachedStudent.name+" "+cachedStudent.age);
+        Student cachedStudent = exampleProxy.loadStudent();
+        Log.d("Student", "student:" + cachedStudent.name + " " + cachedStudent.age);
+
+        ArrayList<Student> students = new ArrayList<>();
+        students.add(student);
+        students.add(student1);
+
+        exampleProxy.cacheStudents(students);
+        ArrayList<Student> arrayList = exampleProxy.loadStudents();
+        for (Student s : arrayList) {
+            Log.d("Student", "student:" + s.name + " " + s.age);
+        }
+
     }
 
     @Override
