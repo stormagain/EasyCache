@@ -34,7 +34,7 @@ public final class CacheProxy {
                 Class<? extends Annotation> annotationType = methodAnnotation.annotationType();
                 if (annotationType == LoadCache.class) {
                     String key = ((LoadCache) methodAnnotation).key();
-                    Class clazz = ((LoadCache) methodAnnotation).getClassType();
+                    Class clazz = ((LoadCache) methodAnnotation).classType();
                     if (clazz.isArray()) {
                         return Utils.loadListCache(name, key, clazz, type);
                     } else {

@@ -13,5 +13,5 @@ import java.lang.annotation.Target;
 public @interface LoadCache {
     String key();
 
-    Class<?> getClassType();
+    Class<?> classType();
 }

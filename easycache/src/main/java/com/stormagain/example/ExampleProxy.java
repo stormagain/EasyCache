@@ -19,7 +19,7 @@ public interface ExampleProxy {
     @Cache
     void cacheStudent(@Key(value = "student") Student student);
 
-    @LoadCache(key = "student", getClassType = Student.class)
+    @LoadCache(key = "student", classType = Student.class)
     Student loadStudent();
 
     @RemoveKey(key = "student")
@@ -31,7 +31,7 @@ public interface ExampleProxy {
     @Cache
     void cacheStudents(@Key(value = "students") ArrayList<Student> students);
 
-    @LoadCache(key = "students", getClassType = Student[].class)
+    @LoadCache(key = "students", classType = Student[].class)
     ArrayList<Student> loadStudents();
 
 }
