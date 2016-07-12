@@ -11,7 +11,9 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EasySpCache {
+public @interface EasyCache {
 
     String name() default "";
+
+    Type type() default Type.SHARED_PREFERENCE;
 }

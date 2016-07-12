@@ -20,10 +20,12 @@ public final class CacheProxy {
 
         private Class<?> clazz;
         private String name;
+        private Type type;
 
         public CacheHandler(Class<?> clazz) {
             this.clazz = clazz;
-            this.name = EasyCacheManager.getInstance().getCacheName(this.clazz);
+            this.name = Utils.getCacheName(this.clazz);
+            this.type = Utils.getCacheType(this.clazz);
         }
 
         @Override
@@ -34,9 +36,9 @@ public final class CacheProxy {
                     String key = ((LoadCache) methodAnnotation).key();
                     Class clazz = ((LoadCache) methodAnnotation).getClassType();
                     if (clazz.isArray()) {
-                        return EasyCacheManager.getInstance().loadListCache(name, key, clazz);
+                        return Utils.loadListCache(name, key, clazz, type);
                     } else {
-                        return EasyCacheManager.getInstance().loadCache(name, key, clazz);
+                        return Utils.loadCache(name, key, clazz, type);
                     }
                 } else if (annotationType == Cache.class) {
                     Annotation[][] parameterAnnotationArrays = method.getParameterAnnotations();
@@ -47,15 +49,15 @@ public final class CacheProxy {
                             Class<? extends Annotation> innerAnnotationType = parameterAnnotation.annotationType();
                             if (innerAnnotationType == Key.class) {
                                 String key = ((Key) parameterAnnotation).value();
-                                EasyCacheManager.getInstance().cache(name, key, Utils.gson.toJson(args[0]));
+                                Utils.cache(name, key, Utils.gson.toJson(args[0]), type);
                             }
                         }
                     }
                 } else if (annotationType == RemoveKey.class) {
                     String key = ((RemoveKey) methodAnnotation).key();
-                    EasyCacheManager.getInstance().removeKey(name, key);
+                    Utils.removeKey(name, key, type);
                 } else if (annotationType == Clear.class) {
-                    EasyCacheManager.getInstance().clear(name);
+                    Utils.clear(name, type);
                 }
             }
             return null;
