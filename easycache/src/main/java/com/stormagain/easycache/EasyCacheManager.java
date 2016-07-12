@@ -123,4 +123,8 @@ public final class EasyCacheManager {
     public CacheProxy getCacheProxy() {
         return cacheProxy;
     }
+
+    public <T> T create(Class<T> clazz) {
+        return getCacheProxy().create(clazz);
+    }
 }

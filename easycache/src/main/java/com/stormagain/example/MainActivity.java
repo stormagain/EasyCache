@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         student1.name = "lisi";
         student1.age = 20;
 
-        ExampleProxy exampleProxy = EasyCacheManager.getInstance().getCacheProxy().create(ExampleProxy.class);
+        ExampleProxy exampleProxy = EasyCacheManager.getInstance().create(ExampleProxy.class);
         //cache
         exampleProxy.cacheStudent(student);
         //loadCache
