@@ -14,4 +14,6 @@ public @interface LoadCache {
     String key();
 
     Class<?> classType();
+
+    Class<?> collectionType() default Object.class;
 }

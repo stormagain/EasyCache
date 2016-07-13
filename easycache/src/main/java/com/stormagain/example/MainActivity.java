@@ -13,7 +13,7 @@ import android.view.View;
 import com.stormagain.easycache.EasyCacheManager;
 import com.stormagain.easycache.R;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,12 +49,12 @@ public class MainActivity extends AppCompatActivity {
         Student cachedStudent = exampleProxy.loadStudent();
         Log.d("Student", "student:" + cachedStudent.name + " " + cachedStudent.age);
 
-        ArrayList<Student> students = new ArrayList<>();
+        HashSet<Student> students = new HashSet<>();
         students.add(student);
         students.add(student1);
 
         exampleProxy.cacheStudents(students);
-        ArrayList<Student> arrayList = exampleProxy.loadStudents();
+        HashSet<Student> arrayList = exampleProxy.loadStudents();
         for (Student s : arrayList) {
             Log.d("Student", "student:" + s.name + " " + s.age);
         }

@@ -8,7 +8,7 @@ import com.stormagain.easycache.LoadCache;
 import com.stormagain.easycache.RemoveKey;
 import com.stormagain.easycache.Type;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by 37X21=777 on 15/11/18.
@@ -29,9 +29,9 @@ public interface ExampleProxy {
     void clearExample();
 
     @Cache
-    void cacheStudents(@Key(value = "students") ArrayList<Student> students);
+    void cacheStudents(@Key(value = "students") HashSet<Student> students);
 
-    @LoadCache(key = "students", classType = Student[].class)
-    ArrayList<Student> loadStudents();
+    @LoadCache(key = "students", classType = Student.class, collectionType = HashSet.class)
+    HashSet<Student> loadStudents();
 
 }

@@ -36,7 +36,7 @@ public final class EasyCacheManager {
     }
 
     public void setup(Context context) {
-        if (mContext == null) {
+        if (mContext == null && context != null) {
             this.mContext = context.getApplicationContext();
         }
     }
