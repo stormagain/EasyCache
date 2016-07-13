@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by 37X21=777 on 16/7/13.
@@ -214,6 +215,8 @@ public class CacheHelper {
             list = new ArrayList<>();
         } else if (collection == LinkedList.class) {
             list = new LinkedList<>();
+        } else if (collection == Vector.class) {
+            list = new Vector<>();
         } else {
             throw new UnsupportedOperationException("not support");
         }
