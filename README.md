@@ -44,7 +44,7 @@ Step3:cache or loadCache
     student.name="zhangsan";
     student.age=18;
 
-    ExampleProxy exampleProxy= EasyCacheManager.getInstance().getCacheProxy().create(ExampleProxy.class);
+    ExampleProxy exampleProxy= EasyCacheManager.getInstance().create(ExampleProxy.class);
     //cache
     exampleProxy.cacheStudent(student);
     //loadCache
