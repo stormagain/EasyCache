@@ -2,7 +2,7 @@
 A convenient cache framework for each kind of data structure ,based on Java dynamic proxy for Android
 
 # Example
-Step1:设置Context
+Step1:setup Context (this step can be skipped although that is not recommend)
 
     public class EasyCacheApplication extends Application {
 
@@ -13,7 +13,7 @@ Step1:设置Context
         }
     }
 
-Step2:代理接口：
+Step2:Config your interface (annotation EasyCache also can be skipped)
 
     @EasyCache(name = "example", type = Type.SHARED_PREFERENCE)
     public interface ExampleProxy {
@@ -38,7 +38,7 @@ Step2:代理接口：
 
     }
 
-Step3:存储或读取
+Step3:cache or loadCache
 
     Student student=new Student();
     student.name="zhangsan";
@@ -52,7 +52,7 @@ Step3:存储或读取
     Log.d("Student","student:"+cachedStudent.name+" "+cachedStudent.age);
 
 # Attention
-As type erasure, Map is not support at this time. Of course, you can use List,Set,ArrayList,LinkedList,HashSet unquestionably
+As type erasure, Map is not support at this time. Of course, you can use List,Set,ArrayList,LinkedList,HashSet unquestionably.
 To use this library, you need to add a GSON dependency
 
 ex:compile 'com.google.code.gson:gson:2.2.4'
