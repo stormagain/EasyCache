@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by 37X21=777 on 15/9/23.
@@ -43,7 +44,10 @@ public final class CacheProxy {
                     Class collection = ((LoadCache) methodAnnotation).collectionType();
                     if (collection == ArrayList.class || collection == LinkedList.class || collection == List.class) {
                         return CacheHelper.loadListCache(name, key, clazz, collection, type);
-                    } else if (collection == Set.class || collection == HashSet.class) {
+                    } else if (collection == Set.class || collection == HashSet.class || collection == TreeSet.class) {
+                        if (collection == TreeSet.class) {
+                            return new TreeSet<>(CacheHelper.loadListCache(name, key, clazz, List.class, type));
+                        }
                         return new HashSet<>(CacheHelper.loadListCache(name, key, clazz, List.class, type));
                     } else {
                         return CacheHelper.loadCache(name, key, clazz, type);
