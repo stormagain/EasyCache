@@ -13,7 +13,7 @@ import java.util.ArrayList;
 /**
  * Created by 37X21=777 on 15/11/18.
  */
-@EasyCache(name = "example_sp", type = Type.SHARED_PREFERENCE)
+@EasyCache(name = "example", type = Type.FILE_ON_DISK)
 public interface ExampleProxy {
 
     @Cache

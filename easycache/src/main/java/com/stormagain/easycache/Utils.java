@@ -49,7 +49,7 @@ final class Utils {
     public static void cache(String name, String key, String data, Type type) {
         switch (type) {
             case FILE_IN_APP:
-                File fileInApp = new File(EasyCacheManager.getInstance().getContext().getCacheDir().getPath() + File.separator + TAG);
+                File fileInApp = new File(getFileInAppPath(name));
                 try {
                     String historyData = readStringFromFile(fileInApp);
                     JSONObject jsonObject = TextUtils.isEmpty(historyData) ? new JSONObject() : new JSONObject(historyData);
@@ -61,7 +61,7 @@ final class Utils {
                 break;
             case FILE_ON_DISK:
                 if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-                    File fileOnDisk = new File(Environment.getExternalStorageDirectory().getPath() + File.separator + EasyCacheManager.getInstance().getContext().getPackageName() + File.separator + TAG);
+                    File fileOnDisk = new File(getFileOnDiskPath(name));
                     try {
                         String historyData = readStringFromFile(fileOnDisk);
                         JSONObject jsonObject = TextUtils.isEmpty(historyData) ? new JSONObject() : new JSONObject(historyData);
@@ -87,7 +87,7 @@ final class Utils {
     public static <T> T loadCache(String name, String key, Class<T> clazz, Type type) {
         switch (type) {
             case FILE_IN_APP:
-                File fileInApp = new File(EasyCacheManager.getInstance().getContext().getCacheDir().getPath() + File.separator + TAG);
+                File fileInApp = new File(getFileInAppPath(name));
                 try {
                     String data = readStringFromFile(fileInApp);
                     if (!TextUtils.isEmpty(data)) {
@@ -108,7 +108,7 @@ final class Utils {
                 break;
             case FILE_ON_DISK:
                 if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-                    File fileOnDisk = new File(Environment.getExternalStorageDirectory().getPath() + File.separator + EasyCacheManager.getInstance().getContext().getPackageName() + File.separator + TAG);
+                    File fileOnDisk = new File(getFileOnDiskPath(name));
                     try {
                         String data = readStringFromFile(fileOnDisk);
                         if (!TextUtils.isEmpty(data)) {
@@ -149,7 +149,7 @@ final class Utils {
     public static <T> List<T> loadListCache(String name, String key, Class<T[]> clazz, Type type) {
         switch (type) {
             case FILE_IN_APP:
-                File fileInApp = new File(EasyCacheManager.getInstance().getContext().getCacheDir().getPath() + File.separator + TAG);
+                File fileInApp = new File(getFileInAppPath(name));
                 try {
                     String data = readStringFromFile(fileInApp);
                     if (!TextUtils.isEmpty(data)) {
@@ -175,7 +175,7 @@ final class Utils {
                 break;
             case FILE_ON_DISK:
                 if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-                    File fileOnDisk = new File(Environment.getExternalStorageDirectory().getPath() + File.separator + EasyCacheManager.getInstance().getContext().getPackageName() + File.separator + TAG);
+                    File fileOnDisk = new File(getFileOnDiskPath(name));
                     try {
                         String data = readStringFromFile(fileOnDisk);
                         if (!TextUtils.isEmpty(data)) {
@@ -225,7 +225,7 @@ final class Utils {
     public static void removeKey(String name, String key, Type type) {
         switch (type) {
             case FILE_IN_APP:
-                File fileInApp = new File(EasyCacheManager.getInstance().getContext().getCacheDir().getPath() + File.separator + TAG);
+                File fileInApp = new File(getFileInAppPath(name));
                 try {
                     String data = readStringFromFile(fileInApp);
                     if (!TextUtils.isEmpty(data)) {
@@ -241,7 +241,7 @@ final class Utils {
                 break;
             case FILE_ON_DISK:
                 if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-                    File fileOnDisk = new File(Environment.getExternalStorageDirectory().getPath() + File.separator + EasyCacheManager.getInstance().getContext().getPackageName() + File.separator + TAG);
+                    File fileOnDisk = new File(getFileOnDiskPath(name));
                     try {
                         String data = readStringFromFile(fileOnDisk);
                         if (!TextUtils.isEmpty(data)) {
@@ -276,14 +276,14 @@ final class Utils {
     public static void clear(String name, Type type) {
         switch (type) {
             case FILE_IN_APP:
-                File fileInApp = new File(EasyCacheManager.getInstance().getContext().getCacheDir().getPath() + File.separator + TAG);
+                File fileInApp = new File(getFileInAppPath(name));
                 if (fileInApp.exists()) {
                     fileInApp.delete();
                 }
                 break;
             case FILE_ON_DISK:
                 if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-                    File fileOnDisk = new File(Environment.getExternalStorageDirectory().getPath() + File.separator + EasyCacheManager.getInstance().getContext().getPackageName() + File.separator + TAG);
+                    File fileOnDisk = new File(getFileOnDiskPath(name));
                     if (fileOnDisk.exists()) {
                         fileOnDisk.delete();
                     }
@@ -301,6 +301,15 @@ final class Utils {
         }
 
     }
+
+    private static String getFileInAppPath(String name) {
+        return EasyCacheManager.getInstance().getContext().getCacheDir().getPath() + File.separator + TAG + File.separator + name;
+    }
+
+    private static String getFileOnDiskPath(String name) {
+        return Environment.getExternalStorageDirectory().getPath() + File.separator + TAG + File.separator + EasyCacheManager.getInstance().getContext().getPackageName().replaceAll("\\.", "_") + File.separator + name;
+    }
+
 
     public static void clear(Class<?> clazz, Type type) {
         String name = getCacheName(clazz);
