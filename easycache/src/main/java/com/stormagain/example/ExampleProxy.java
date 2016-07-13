@@ -13,7 +13,7 @@ import java.util.HashSet;
 /**
  * Created by 37X21=777 on 15/11/18.
  */
-@EasyCache(name = "example", type = Type.FILE_ON_DISK)
+@EasyCache(name = "example", type = Type.SHARED_PREFERENCE)
 public interface ExampleProxy {
 
     @Cache

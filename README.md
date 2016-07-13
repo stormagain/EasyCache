@@ -1,5 +1,5 @@
 # EasyCache
-A SharedPreferences storage framework based on Java dynamic proxy for Android
+A convenient cache framework for each kind of data structure ,based on Java dynamic proxy for Android
 
 # Example
 Step1:设置Context
@@ -15,14 +15,26 @@ Step1:设置Context
 
 Step2:代理接口：
 
-    @EasySpCache(name = "example_sp")
+    @EasyCache(name = "example", type = Type.SHARED_PREFERENCE)
     public interface ExampleProxy {
 
         @Cache
         void cacheStudent(@Key(value = "student") Student student);
 
-        @LoadCache(key = "student",getClassType = Student.class)
+        @LoadCache(key = "student", classType = Student.class)
         Student loadStudent();
+
+        @RemoveKey(key = "student")
+        void removeStudent();
+
+        @Clear
+        void clearExample();
+
+        @Cache
+        void cacheStudents(@Key(value = "students") HashSet<Student> students);
+
+        @LoadCache(key = "students", classType = Student.class, collectionType = HashSet.class)
+        HashSet<Student> loadStudents();
 
     }
 
@@ -40,6 +52,7 @@ Step3:存储或读取
     Log.d("Student","student:"+cachedStudent.name+" "+cachedStudent.age);
 
 # Attention
+As type erasure, Map is not support at this time. Of course, you can use List,Set,ArrayList,LinkedList,HashSet unquestionably
 To use this library, you need to add a GSON dependency
 
 ex:compile 'com.google.code.gson:gson:2.2.4'
