@@ -54,8 +54,8 @@ public class MainActivity extends AppCompatActivity {
         students.add(student1);
 
         exampleProxy.cacheStudents(students);
-        HashSet<Student> arrayList = exampleProxy.loadStudents();
-        for (Student s : arrayList) {
+        HashSet<Student> set = exampleProxy.loadStudents();
+        for (Student s : set) {
             Log.d("Student", "student:" + s.name + " " + s.age);
         }
 
