@@ -1,14 +1,9 @@
 package com.stormagain.easycache;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Build;
-import android.text.TextUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by 37X21=777 on 15/9/24.
