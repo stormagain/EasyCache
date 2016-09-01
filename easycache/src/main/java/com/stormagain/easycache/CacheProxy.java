@@ -49,12 +49,13 @@ public final class CacheProxy {
                     if (collection == ArrayList.class || collection == LinkedList.class || collection == List.class || collection == Vector.class) {
                         return CacheHelper.loadListCache(name, key, clazz, collection, type);
                     } else if (collection == Set.class || collection == HashSet.class || collection == TreeSet.class || collection == LinkedHashSet.class || collection == SortedSet.class || collection == NavigableSet.class) {
-                        if (collection == TreeSet.class|| collection == SortedSet.class || collection == NavigableSet.class) {
-                            return new TreeSet<>(CacheHelper.loadListCache(name, key, clazz, List.class, type));
+                        List list = CacheHelper.loadListCache(name, key, clazz, List.class, type);
+                        if (collection == TreeSet.class || collection == SortedSet.class || collection == NavigableSet.class) {
+                            return list == null ? null : new TreeSet<>(list);
                         } else if (collection == LinkedHashSet.class) {
-                            return new LinkedHashSet<>(CacheHelper.loadListCache(name, key, clazz, List.class, type));
+                            return list == null ? null : new LinkedHashSet<>(list);
                         }
-                        return new HashSet<>(CacheHelper.loadListCache(name, key, clazz, List.class, type));
+                        return list == null ? null : new HashSet<>(list);
                     } else {
                         return CacheHelper.loadCache(name, key, clazz, type);
                     }
@@ -72,8 +73,8 @@ public final class CacheProxy {
                         }
                     }
                 } else if (annotationType == RemoveKey.class) {
-                    String key = ((RemoveKey) methodAnnotation).key();
-                    CacheHelper.removeKey(name, key, type);
+                    String[] keys = ((RemoveKey) methodAnnotation).value();
+                    CacheHelper.removeKey(name, keys, type);
                 } else if (annotationType == Clear.class) {
                     CacheHelper.clear(name, type);
                 }

@@ -230,11 +230,11 @@ public class CacheHelper {
 
     /**
      * @param name 文件名
-     * @param key  存储key
+     * @param keys 存储key集合
      * @param type 存储类型
      *             删除对应的key
      */
-    public static void removeKey(String name, String key, Type type) {
+    public static void removeKey(String name, String[] keys, Type type) {
         switch (type) {
             case FILE_IN_APP:
                 File fileInApp = new File(getFileInAppPath(name));
@@ -242,10 +242,12 @@ public class CacheHelper {
                     String data = Utils.readStringFromFile(fileInApp);
                     if (!TextUtils.isEmpty(data)) {
                         JSONObject jsonObject = new JSONObject(data);
-                        jsonObject.remove(key);
+                        for (String key : keys) {
+                            jsonObject.remove(key);
+                        }
                         Utils.writeStringToFile(fileInApp, jsonObject.toString());
                     } else {
-                        Utils.logError("No history cache for the specified key:" + key);
+                        Utils.logError("No history cache for the specified file:" + name);
                     }
                 } catch (JSONException | IOException e) {
                     Utils.logError(Log.getStackTraceString(e));
@@ -258,10 +260,12 @@ public class CacheHelper {
                         String data = Utils.readStringFromFile(fileOnDisk);
                         if (!TextUtils.isEmpty(data)) {
                             JSONObject jsonObject = new JSONObject(data);
-                            jsonObject.remove(key);
+                            for (String key : keys) {
+                                jsonObject.remove(key);
+                            }
                             Utils.writeStringToFile(fileOnDisk, jsonObject.toString());
                         } else {
-                            Utils.logError("No history cache for the specified key:" + key);
+                            Utils.logError("No history cache for the specified file:" + name);
                         }
                     } catch (JSONException | IOException e) {
                         Utils.logError(Log.getStackTraceString(e));
@@ -273,13 +277,15 @@ public class CacheHelper {
             case SHARED_PREFERENCE:
             default:
                 SharedPreferences sharedPreferences = EasyCacheManager.getInstance().getContext().getSharedPreferences(name, Context.MODE_PRIVATE);
-                if (sharedPreferences.contains(key)) {
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.remove(key);
-                    Utils.apply(editor);
-                } else {
-                    Utils.logError("The specified key:" + key + " is not found");
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                for (String key : keys) {
+                    if (sharedPreferences.contains(key)) {
+                        editor.remove(key);
+                    } else {
+                        Utils.logError("The specified key:" + key + " is not found");
+                    }
                 }
+                Utils.apply(editor);
                 break;
         }
 

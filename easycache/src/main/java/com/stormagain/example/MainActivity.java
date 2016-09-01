@@ -59,6 +59,10 @@ public class MainActivity extends AppCompatActivity {
             Log.d("Student", "student:" + s.name + " " + s.age);
         }
 
+        //批量删除多个key
+        exampleProxy.removeStudent();
+        exampleProxy.loadStudents();
+
     }
 
     @Override

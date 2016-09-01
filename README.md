@@ -1,5 +1,5 @@
 # EasyCache
-A convenient cache framework for each kind of data structure ,based on Java dynamic proxy for Android
+A convenient cache library for each kind of data structure ,based on Java dynamic proxy for Android
 
 # Example
 Step1:setup Context (this step can be skipped although that is not recommend)
@@ -19,19 +19,19 @@ Step2:Config your interface (annotation EasyCache also can be skipped)
     public interface ExampleProxy {
 
         @Cache
-        void cacheStudent(@Key(value = "student") Student student);
+        void cacheStudent(@Key("student") Student student);
 
         @LoadCache(key = "student", classType = Student.class)
         Student loadStudent();
 
-        @RemoveKey(key = "student")
+        @RemoveKey("student")
         void removeStudent();
 
         @Clear
         void clearExample();
 
         @Cache
-        void cacheStudents(@Key(value = "students") HashSet<Student> students);
+        void cacheStudents(@Key("students") HashSet<Student> students);
 
         @LoadCache(key = "students", classType = Student.class, collectionType = HashSet.class)
         HashSet<Student> loadStudents();
