@@ -1,19 +1,18 @@
 package com.stormagain.easycache;
 
+import com.stormagain.easycache.annotation.Cache;
+import com.stormagain.easycache.annotation.Clear;
+import com.stormagain.easycache.annotation.Key;
+import com.stormagain.easycache.annotation.LoadCache;
+import com.stormagain.easycache.annotation.RemoveKey;
+
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.Collection;
 import java.util.List;
-import java.util.NavigableSet;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.Vector;
 
 /**
  * Created by 37X21=777 on 15/9/23.
@@ -46,19 +45,22 @@ public final class CacheProxy {
                     String key = ((LoadCache) methodAnnotation).key();
                     Class clazz = ((LoadCache) methodAnnotation).classType();
                     Class collection = ((LoadCache) methodAnnotation).collectionType();
-                    if (collection == ArrayList.class || collection == LinkedList.class || collection == List.class || collection == Vector.class) {
-                        return CacheHelper.loadListCache(name, key, clazz, collection, type);
-                    } else if (collection == Set.class || collection == HashSet.class || collection == TreeSet.class || collection == LinkedHashSet.class || collection == SortedSet.class || collection == NavigableSet.class) {
-                        List list = CacheHelper.loadListCache(name, key, clazz, List.class, type);
-                        if (collection == TreeSet.class || collection == SortedSet.class || collection == NavigableSet.class) {
-                            return list == null ? null : new TreeSet<>(list);
-                        } else if (collection == LinkedHashSet.class) {
-                            return list == null ? null : new LinkedHashSet<>(list);
+                    if (collection != Object.class) {
+                        if (Collection.class.isAssignableFrom(collection)) {
+                            List list = CacheHelper.loadListCache(name, key, clazz, List.class, type);
+                            try {
+                                if (list != null) {
+                                    Class clz = Class.forName(collection.getName());
+                                    Constructor c = clz.getConstructor(Collection.class);
+                                    c.setAccessible(true);
+                                    return c.newInstance(list);
+                                }
+                            } catch (Throwable e) {
+                                //ignore
+                            }
                         }
-                        return list == null ? null : new HashSet<>(list);
-                    } else {
-                        return CacheHelper.loadCache(name, key, clazz, type);
                     }
+                    return CacheHelper.loadCache(name, key, clazz, type);
                 } else if (annotationType == Cache.class) {
                     Annotation[][] parameterAnnotationArrays = method.getParameterAnnotations();
                     if (parameterAnnotationArrays.length > 0) {

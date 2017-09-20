@@ -6,6 +6,8 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.stormagain.easycache.annotation.EasyCache;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -210,16 +212,7 @@ public class CacheHelper {
     }
 
     private static <T> List<T> getList(Class<T> clazz, Class<T> collection, String value) throws JSONException {
-        List<T> list = null;
-        if (collection == List.class || collection == ArrayList.class) {
-            list = new ArrayList<>();
-        } else if (collection == LinkedList.class) {
-            list = new LinkedList<>();
-        } else if (collection == Vector.class) {
-            list = new Vector<>();
-        } else {
-            throw new UnsupportedOperationException("not support");
-        }
+        List<T> list = new ArrayList<>();
 
         JSONArray jsonArray = new JSONArray(value);
         for (int i = 0; i < jsonArray.length(); i++) {

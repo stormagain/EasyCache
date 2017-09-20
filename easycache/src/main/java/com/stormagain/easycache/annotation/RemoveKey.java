@@ -1,4 +1,4 @@
-package com.stormagain.easycache;
+package com.stormagain.easycache.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,10 +10,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface LoadCache {
-    String key();
+public @interface RemoveKey {
 
-    Class<?> classType();
-
-    Class<?> collectionType() default Object.class;
+    String[] value();
 }

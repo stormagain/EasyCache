@@ -1,11 +1,11 @@
 package com.stormagain.example;
 
-import com.stormagain.easycache.Cache;
-import com.stormagain.easycache.Clear;
-import com.stormagain.easycache.EasyCache;
-import com.stormagain.easycache.Key;
-import com.stormagain.easycache.LoadCache;
-import com.stormagain.easycache.RemoveKey;
+import com.stormagain.easycache.annotation.Cache;
+import com.stormagain.easycache.annotation.Clear;
+import com.stormagain.easycache.annotation.EasyCache;
+import com.stormagain.easycache.annotation.Key;
+import com.stormagain.easycache.annotation.LoadCache;
+import com.stormagain.easycache.annotation.RemoveKey;
 import com.stormagain.easycache.Type;
 
 import java.util.HashSet;

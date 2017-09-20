@@ -1,4 +1,4 @@
-package com.stormagain.easycache;
+package com.stormagain.easycache.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -8,12 +8,8 @@ import java.lang.annotation.Target;
 /**
  * Created by 37X21=777 on 15/9/24.
  */
-
-@Target(ElementType.TYPE)
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EasyCache {
-
-    String name() default "";
-
-    Type type() default Type.SHARED_PREFERENCE;
+public @interface Key {
+    String value();
 }
