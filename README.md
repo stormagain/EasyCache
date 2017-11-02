@@ -3,6 +3,7 @@ A convenient cache library for each kind of data structure ,based on Java dynami
 
 # Feature
 1:支持任意自定义类型数据结构存储
+
 2:支持RxJava2
 
 # Example
