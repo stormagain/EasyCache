@@ -39,10 +39,10 @@ public class RxJava2Support {
         java.lang.reflect.Type returnType = method.getGenericReturnType();
         if (returnType != void.class) {
             if (hasRxJava2()) {
-                Class rawReturnType = Types.getRawType(returnType);
+                Class rawReturnType = TypeUtils.getRawType(returnType);
                 if (rawReturnType == Observable.class) {
-                    returnType = Types.getSupertype(returnType, rawReturnType, Observable.class);
-                    responseObjectType = Types.getParameterUpperBound((ParameterizedType) returnType);
+                    returnType = TypeUtils.getSupertype(returnType, rawReturnType, Observable.class);
+                    responseObjectType = TypeUtils.getParameterUpperBound((ParameterizedType) returnType);
                     info.hasRxObs = true;
                     info.returnType = responseObjectType;
                     return info;

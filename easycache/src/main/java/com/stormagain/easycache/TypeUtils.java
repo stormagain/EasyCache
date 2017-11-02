@@ -14,10 +14,10 @@ import java.util.NoSuchElementException;
  * Created by 37X21=777 on 17/11/2.
  */
 
-final class Types {
+final class TypeUtils {
     private static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
 
-    private Types() {
+    private TypeUtils() {
         // No instances.
     }
 
@@ -303,7 +303,7 @@ final class Types {
 
         @Override
         public boolean equals(Object other) {
-            return other instanceof ParameterizedType && Types.equals(this, (ParameterizedType) other);
+            return other instanceof ParameterizedType && TypeUtils.equals(this, (ParameterizedType) other);
         }
 
         @Override
@@ -338,7 +338,7 @@ final class Types {
         @Override
         public boolean equals(Object o) {
             return o instanceof GenericArrayType
-                    && Types.equals(this, (GenericArrayType) o);
+                    && TypeUtils.equals(this, (GenericArrayType) o);
         }
 
         @Override
@@ -389,7 +389,7 @@ final class Types {
 
         @Override
         public boolean equals(Object other) {
-            return other instanceof WildcardType && Types.equals(this, (WildcardType) other);
+            return other instanceof WildcardType && TypeUtils.equals(this, (WildcardType) other);
         }
 
         @Override
