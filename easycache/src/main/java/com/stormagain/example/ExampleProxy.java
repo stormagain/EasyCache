@@ -10,6 +10,8 @@ import com.stormagain.easycache.Type;
 
 import java.util.HashSet;
 
+import io.reactivex.Observable;
+
 /**
  * Created by 37X21=777 on 15/11/18.
  */
@@ -19,8 +21,8 @@ public interface ExampleProxy {
     @Cache
     void cacheStudent(@Key("student") Student student);
 
-    @LoadCache(key = "student", classType = Student.class)
-    Student loadStudent();
+    @LoadCache(key = "student")
+    Observable<Student> loadStudent();
 
     @RemoveKey({"student", "students"})
     void removeStudent();
@@ -31,7 +33,7 @@ public interface ExampleProxy {
     @Cache
     void cacheStudents(@Key("students") HashSet<Student> students);
 
-    @LoadCache(key = "students", classType = Student.class, collectionType = HashSet.class)
+    @LoadCache(key = "students")
     HashSet<Student> loadStudents();
 
 }

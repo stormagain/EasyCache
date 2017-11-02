@@ -15,6 +15,10 @@ import com.stormagain.easycache.R;
 
 import java.util.HashSet;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -46,8 +50,21 @@ public class MainActivity extends AppCompatActivity {
         //cache
         exampleProxy.cacheStudent(student);
         //loadCache
-        Student cachedStudent = exampleProxy.loadStudent();
-        Log.d("Student", "student:" + cachedStudent.name + " " + cachedStudent.age);
+        exampleProxy.loadStudent().observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(
+                new Consumer<Student>() {
+                    @Override
+                    public void accept(Student cachedStudent) throws Exception {
+                        Log.d("Student", "student:" + cachedStudent.name + " " + cachedStudent.age);
+                    }
+                },
+                new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                }
+        );
+
 
         HashSet<Student> students = new HashSet<>();
         students.add(student);
@@ -60,8 +77,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //批量删除多个key
-        exampleProxy.removeStudent();
-        exampleProxy.loadStudents();
+//        exampleProxy.removeStudent();
+//        exampleProxy.loadStudents();
 
     }
 

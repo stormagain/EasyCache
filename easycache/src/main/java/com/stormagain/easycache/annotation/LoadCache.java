@@ -12,8 +12,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LoadCache {
     String key();
-
-    Class<?> classType();
-
-    Class<?> collectionType() default Object.class;
 }

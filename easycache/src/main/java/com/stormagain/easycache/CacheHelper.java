@@ -76,7 +76,7 @@ public class CacheHelper {
      * @param type  存储方式
      *              加载非集合型缓存数据
      */
-    public static <T> T loadCache(String name, String key, Class<T> clazz, Type type) {
+    public static <T> T loadCache(String name, String key, java.lang.reflect.Type clazz, Type type) {
         switch (type) {
             case FILE_IN_APP:
                 File fileInApp = new File(getFileInAppPath(name));
@@ -138,88 +138,6 @@ public class CacheHelper {
         return null;
     }
 
-    /**
-     * @param name       文件名
-     * @param key        存储key
-     * @param clazz      集合中每条数据的类型
-     * @param collection 集合类型（List）
-     * @param type       存储类型
-     *                   加载List型数据
-     */
-    public static <T> List<T> loadListCache(String name, String key, Class<T> clazz, Class<T> collection, Type type) {
-        switch (type) {
-            case FILE_IN_APP:
-                File fileInApp = new File(getFileInAppPath(name));
-                try {
-                    String data = Utils.readStringFromFile(fileInApp);
-                    if (!TextUtils.isEmpty(data)) {
-                        JSONObject jsonObject = new JSONObject(data);
-                        String value = jsonObject.getString(key);
-                        if (!TextUtils.isEmpty(value)) {
-                            return getList(clazz, collection, value);
-                        } else {
-                            Utils.logError("The specified key:" + key + " is not found");
-                        }
-                    } else {
-                        Utils.logError("No history cache for the specified key:" + key);
-                    }
-
-                } catch (JSONException | IOException e) {
-                    Utils.logError(Log.getStackTraceString(e));
-                }
-                break;
-            case FILE_ON_DISK:
-                if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-                    File fileOnDisk = new File(getFileOnDiskPath(name));
-                    try {
-                        String data = Utils.readStringFromFile(fileOnDisk);
-                        if (!TextUtils.isEmpty(data)) {
-                            JSONObject jsonObject = new JSONObject(data);
-                            String value = jsonObject.getString(key);
-                            if (!TextUtils.isEmpty(value)) {
-                                return getList(clazz, collection, value);
-                            } else {
-                                Utils.logError("The specified key:" + key + " is not found");
-                            }
-                        } else {
-                            Utils.logError("No history cache for the specified key:" + key);
-                        }
-                    } catch (JSONException | IOException e) {
-                        Utils.logError(Log.getStackTraceString(e));
-                    }
-                } else {
-                    Utils.logError("No SDCard");
-                }
-                break;
-            case SHARED_PREFERENCE:
-            default:
-                SharedPreferences sharedPreferences = EasyCacheManager.getInstance().getContext().getSharedPreferences(name, Context.MODE_PRIVATE);
-                if (sharedPreferences.contains(key)) {
-                    String data = sharedPreferences.getString(key, "");
-                    try {
-                        if (!TextUtils.isEmpty(data)) {
-                            return getList(clazz, collection, data);
-                        }
-                    } catch (JSONException e) {
-                        Utils.logError(Log.getStackTraceString(e));
-                    }
-                } else {
-                    Utils.logError("The specified key:" + key + " is not found");
-                }
-                break;
-        }
-        return null;
-    }
-
-    private static <T> List<T> getList(Class<T> clazz, Class<T> collection, String value) throws JSONException {
-        List<T> list = new ArrayList<>();
-
-        JSONArray jsonArray = new JSONArray(value);
-        for (int i = 0; i < jsonArray.length(); i++) {
-            list.add(Utils.gson.fromJson(jsonArray.getString(i), clazz));
-        }
-        return list;
-    }
 
     /**
      * @param name 文件名

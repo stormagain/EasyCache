@@ -1,10 +1,14 @@
 package com.stormagain.easycache;
 
+import android.support.annotation.Nullable;
+import android.util.Log;
+
 import com.stormagain.easycache.annotation.Cache;
 import com.stormagain.easycache.annotation.Clear;
 import com.stormagain.easycache.annotation.Key;
 import com.stormagain.easycache.annotation.LoadCache;
 import com.stormagain.easycache.annotation.RemoveKey;
+import com.stormagain.example.Student;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -13,6 +17,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by 37X21=777 on 15/9/23.
@@ -39,28 +49,38 @@ public final class CacheProxy {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            return handle(method, args);
+        }
+
+        private Object handle(final Method method, final Object[] args) {
+            final ReturnInfo info = RxJava2Support.isReturnObs(method);
+            if (info.hasRxObs) {
+
+                Observable observable = Observable.create(new ObservableOnSubscribe() {
+                    @Override
+                    public void subscribe(@NonNull ObservableEmitter e) throws Exception {
+                        Object obj = handleAnnotations(method, args, info.returnType);
+                        if (obj != null) {
+                            e.onNext(obj);
+                        } else {
+                            e.onError(new Exception("no data"));
+                        }
+                    }
+                });
+
+                return observable;
+            } else {
+                return handleAnnotations(method, args, info.returnType);
+            }
+        }
+
+        @Nullable
+        private Object handleAnnotations(Method method, Object[] args, java.lang.reflect.Type t) {
             for (Annotation methodAnnotation : method.getAnnotations()) {
                 Class<? extends Annotation> annotationType = methodAnnotation.annotationType();
                 if (annotationType == LoadCache.class) {
                     String key = ((LoadCache) methodAnnotation).key();
-                    Class clazz = ((LoadCache) methodAnnotation).classType();
-                    Class collection = ((LoadCache) methodAnnotation).collectionType();
-                    if (collection != Object.class) {
-                        if (Collection.class.isAssignableFrom(collection)) {
-                            List list = CacheHelper.loadListCache(name, key, clazz, List.class, type);
-                            try {
-                                if (list != null) {
-                                    Class clz = Class.forName(collection.getName());
-                                    Constructor c = clz.getConstructor(Collection.class);
-                                    c.setAccessible(true);
-                                    return c.newInstance(list);
-                                }
-                            } catch (Throwable e) {
-                                //ignore
-                            }
-                        }
-                    }
-                    return CacheHelper.loadCache(name, key, clazz, type);
+                    return CacheHelper.loadCache(name, key, t, type);
                 } else if (annotationType == Cache.class) {
                     Annotation[][] parameterAnnotationArrays = method.getParameterAnnotations();
                     if (parameterAnnotationArrays.length > 0) {
