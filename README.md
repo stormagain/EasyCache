@@ -1,5 +1,5 @@
 # EasyCache
-A convenient cache library for each kind of data structure ,based on Java dynamic proxy for Android
+类似Retrofit风格的缓存库
 
 # Feature
 1:支持任意自定义类型数据结构存储
@@ -7,7 +7,7 @@ A convenient cache library for each kind of data structure ,based on Java dynami
 2:支持RxJava2
 
 # Example
-Step1:setup Context (this step can be skipped although that is not recommend)
+Step1:设置Context
 
     public class EasyCacheApplication extends Application {
 
@@ -18,7 +18,7 @@ Step1:setup Context (this step can be skipped although that is not recommend)
         }
     }
 
-Step2:Config your interface (annotation EasyCache also can be skipped)
+Step2:配置interface
 
     @EasyCache(name = "example", type = Type.SHARED_PREFERENCE)
     public interface ExampleProxy {
@@ -43,7 +43,7 @@ Step2:Config your interface (annotation EasyCache also can be skipped)
 
     }
 
-Step3:cache or loadCache
+Step3:存储、读取
 
         Student student = new Student();
         student.name = "zhangsan";
@@ -98,7 +98,6 @@ Step3:cache or loadCache
         }
 
 # Attention
-As type erasure, Map is not support at this time. Of course, you can use List,Set,ArrayList,LinkedList,HashSet unquestionably.
-To use this library, you need to add a GSON dependency
+需依赖google的Gson库
 
 ex:compile 'com.google.code.gson:gson:2.2.4'
