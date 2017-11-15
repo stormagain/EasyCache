@@ -19,7 +19,7 @@ import io.reactivex.Observable;
 public interface ExampleProxy {
 
     @Cache
-    void cacheStudent(@Key("student") Student student);
+    boolean cacheStudent(@Key("student") Student student);
 
     @LoadCache(key = "student")
     Observable<Student> loadStudent();
@@ -31,7 +31,7 @@ public interface ExampleProxy {
     void clearExample();
 
     @Cache
-    void cacheStudents(@Key("students") HashSet<Student> students);
+    Observable<Boolean> cacheStudents(@Key("students") HashSet<Student> students);
 
     @LoadCache(key = "students")
     HashSet<Student> loadStudents();

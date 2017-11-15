@@ -4,20 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.stormagain.easycache.annotation.EasyCache;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Vector;
 
 /**
  * Created by 37X21=777 on 16/7/13.
@@ -31,42 +22,47 @@ public class CacheHelper {
      * @param type 存储方式
      *             缓存数据
      */
-    public static void cache(String name, String key, String data, Type type) {
+    public static Response cache(String name, String key, String data, Type type) {
+        Response response = new Response();
         switch (type) {
             case FILE_IN_APP:
-                File fileInApp = new File(getFileInAppPath(name));
                 try {
+                    File fileInApp = new File(getFileInAppPath(name));
                     String historyData = Utils.readStringFromFile(fileInApp);
                     JSONObject jsonObject = TextUtils.isEmpty(historyData) ? new JSONObject() : new JSONObject(historyData);
                     jsonObject.put(key, data);
                     Utils.writeStringToFile(fileInApp, jsonObject.toString());
-                } catch (JSONException | IOException e) {
-                    Utils.logError(Log.getStackTraceString(e));
+                    response.object = true;
+                } catch (Throwable e) {
+                    response.error = e;
                 }
                 break;
             case FILE_ON_DISK:
-                if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+                try {
                     File fileOnDisk = new File(getFileOnDiskPath(name));
-                    try {
-                        String historyData = Utils.readStringFromFile(fileOnDisk);
-                        JSONObject jsonObject = TextUtils.isEmpty(historyData) ? new JSONObject() : new JSONObject(historyData);
-                        jsonObject.put(key, data);
-                        Utils.writeStringToFile(fileOnDisk, jsonObject.toString());
-                    } catch (JSONException | IOException e) {
-                        Utils.logError(Log.getStackTraceString(e));
-                    }
-                } else {
-                    Utils.logError("No SDCard");
+                    String historyData = Utils.readStringFromFile(fileOnDisk);
+                    JSONObject jsonObject = TextUtils.isEmpty(historyData) ? new JSONObject() : new JSONObject(historyData);
+                    jsonObject.put(key, data);
+                    Utils.writeStringToFile(fileOnDisk, jsonObject.toString());
+                    response.object = true;
+                } catch (Throwable e) {
+                    response.error = e;
                 }
                 break;
             case SHARED_PREFERENCE:
             default:
-                SharedPreferences sharedPreferences = EasyCacheManager.getInstance().getContext().getSharedPreferences(name, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(key, data);
-                Utils.apply(editor);
+                try {
+                    SharedPreferences sharedPreferences = EasyCacheManager.getInstance().getContext().getSharedPreferences(name, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString(key, data);
+                    Utils.apply(editor);
+                    response.object = true;
+                } catch (Throwable e) {
+                    response.error = e;
+                }
                 break;
         }
+        return response;
     }
 
     /**
@@ -76,66 +72,68 @@ public class CacheHelper {
      * @param type  存储方式
      *              加载非集合型缓存数据
      */
-    public static <T> T loadCache(String name, String key, java.lang.reflect.Type clazz, Type type) {
+    public static <T> Response<T> loadCache(String name, String key, java.lang.reflect.Type clazz, Type type) {
+        Response<T> response = new Response<>();
         switch (type) {
             case FILE_IN_APP:
-                File fileInApp = new File(getFileInAppPath(name));
                 try {
+                    File fileInApp = new File(getFileInAppPath(name));
                     String data = Utils.readStringFromFile(fileInApp);
                     if (!TextUtils.isEmpty(data)) {
                         JSONObject jsonObject = new JSONObject(data);
                         String value = jsonObject.getString(key);
                         if (!TextUtils.isEmpty(value)) {
-                            return Utils.gson.fromJson(value, clazz);
+                            response.object = Utils.gson.fromJson(value, clazz);
                         } else {
-                            Utils.logError("The specified key:" + key + " is not found");
+                            response.error = new IOException("The specified key:" + key + " is not found");
                         }
                     } else {
-                        Utils.logError("No history cache for the specified key:" + key);
+                        response.error = new IOException("No history cache for the specified key:" + key);
                     }
-
-                } catch (JSONException | IOException e) {
-                    Utils.logError(Log.getStackTraceString(e));
+                } catch (Throwable e) {
+                    response.error = e;
                 }
                 break;
             case FILE_ON_DISK:
-                if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+                try {
                     File fileOnDisk = new File(getFileOnDiskPath(name));
-                    try {
-                        String data = Utils.readStringFromFile(fileOnDisk);
-                        if (!TextUtils.isEmpty(data)) {
-                            JSONObject jsonObject = new JSONObject(data);
-                            String value = jsonObject.getString(key);
-                            if (!TextUtils.isEmpty(value)) {
-                                return Utils.gson.fromJson(value, clazz);
-                            } else {
-                                Utils.logError("The specified key:" + key + " is not found");
-                            }
+                    String data = Utils.readStringFromFile(fileOnDisk);
+                    if (!TextUtils.isEmpty(data)) {
+                        JSONObject jsonObject = new JSONObject(data);
+                        String value = jsonObject.getString(key);
+                        if (!TextUtils.isEmpty(value)) {
+                            response.object = Utils.gson.fromJson(value, clazz);
                         } else {
-                            Utils.logError("No history cache for the specified key:" + key);
+                            response.error = new IOException("The specified key:" + key + " is not found");
                         }
-
-                    } catch (JSONException | IOException e) {
-                        Utils.logError(Log.getStackTraceString(e));
+                    } else {
+                        response.error = new IOException("No history cache for the specified key:" + key);
                     }
-                } else {
-                    Utils.logError("No SDCard");
+                } catch (Throwable e) {
+                    response.error = e;
                 }
+
                 break;
             case SHARED_PREFERENCE:
             default:
-                SharedPreferences sharedPreferences = EasyCacheManager.getInstance().getContext().getSharedPreferences(name, Context.MODE_PRIVATE);
-                if (sharedPreferences.contains(key)) {
-                    String data = sharedPreferences.getString(key, "");
-                    if (!TextUtils.isEmpty(data)) {
-                        return Utils.gson.fromJson(data, clazz);
+                try {
+                    SharedPreferences sharedPreferences = EasyCacheManager.getInstance().getContext().getSharedPreferences(name, Context.MODE_PRIVATE);
+                    if (sharedPreferences.contains(key)) {
+                        String data = sharedPreferences.getString(key, "");
+                        if (!TextUtils.isEmpty(data)) {
+                            response.object = Utils.gson.fromJson(data, clazz);
+                        } else {
+                            response.error = new IOException("The specified key:" + key + " is no data");
+                        }
+                    } else {
+                        response.error = new IOException("The specified key:" + key + " is not found");
                     }
-                } else {
-                    Utils.logError("The specified key:" + key + " is not found");
+                } catch (Throwable e) {
+                    response.error = e;
                 }
                 break;
         }
-        return null;
+        return response;
     }
 
 
@@ -145,11 +143,12 @@ public class CacheHelper {
      * @param type 存储类型
      *             删除对应的key
      */
-    public static void removeKey(String name, String[] keys, Type type) {
+    public static Response removeKey(String name, String[] keys, Type type) {
+        Response response = new Response();
         switch (type) {
             case FILE_IN_APP:
-                File fileInApp = new File(getFileInAppPath(name));
                 try {
+                    File fileInApp = new File(getFileInAppPath(name));
                     String data = Utils.readStringFromFile(fileInApp);
                     if (!TextUtils.isEmpty(data)) {
                         JSONObject jsonObject = new JSONObject(data);
@@ -157,49 +156,52 @@ public class CacheHelper {
                             jsonObject.remove(key);
                         }
                         Utils.writeStringToFile(fileInApp, jsonObject.toString());
+                        response.object = true;
                     } else {
-                        Utils.logError("No history cache for the specified file:" + name);
+                        response.error = new IOException("No history cache for the specified file:" + name);
                     }
-                } catch (JSONException | IOException e) {
-                    Utils.logError(Log.getStackTraceString(e));
+                } catch (Throwable e) {
+                    response.error = e;
                 }
                 break;
             case FILE_ON_DISK:
-                if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+                try {
                     File fileOnDisk = new File(getFileOnDiskPath(name));
-                    try {
-                        String data = Utils.readStringFromFile(fileOnDisk);
-                        if (!TextUtils.isEmpty(data)) {
-                            JSONObject jsonObject = new JSONObject(data);
-                            for (String key : keys) {
-                                jsonObject.remove(key);
-                            }
-                            Utils.writeStringToFile(fileOnDisk, jsonObject.toString());
-                        } else {
-                            Utils.logError("No history cache for the specified file:" + name);
+                    String data = Utils.readStringFromFile(fileOnDisk);
+                    if (!TextUtils.isEmpty(data)) {
+                        JSONObject jsonObject = new JSONObject(data);
+                        for (String key : keys) {
+                            jsonObject.remove(key);
                         }
-                    } catch (JSONException | IOException e) {
-                        Utils.logError(Log.getStackTraceString(e));
+                        Utils.writeStringToFile(fileOnDisk, jsonObject.toString());
+                        response.object = true;
+                    } else {
+                        response.error = new IOException("No history cache for the specified file:" + name);
                     }
-                } else {
-                    Utils.logError("No SDCard");
+                } catch (Throwable e) {
+                    response.error = e;
                 }
+
                 break;
             case SHARED_PREFERENCE:
             default:
-                SharedPreferences sharedPreferences = EasyCacheManager.getInstance().getContext().getSharedPreferences(name, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                for (String key : keys) {
-                    if (sharedPreferences.contains(key)) {
-                        editor.remove(key);
-                    } else {
-                        Utils.logError("The specified key:" + key + " is not found");
+                try {
+                    SharedPreferences sharedPreferences = EasyCacheManager.getInstance().getContext().getSharedPreferences(name, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    for (String key : keys) {
+                        if (sharedPreferences.contains(key)) {
+                            editor.remove(key);
+                        }
                     }
+                    Utils.apply(editor);
+                    response.object = true;
+                } catch (Throwable e) {
+                    response.error = e;
                 }
-                Utils.apply(editor);
                 break;
         }
 
+        return response;
     }
 
     /**
@@ -207,33 +209,45 @@ public class CacheHelper {
      * @param type 存储类型
      *             清除文件
      */
-    public static void clear(String name, Type type) {
+    public static Response clear(String name, Type type) {
+        Response response = new Response();
         switch (type) {
             case FILE_IN_APP:
-                File fileInApp = new File(getFileInAppPath(name));
-                if (fileInApp.exists()) {
-                    fileInApp.delete();
+                try {
+                    File fileInApp = new File(getFileInAppPath(name));
+                    if (fileInApp.exists()) {
+                        fileInApp.delete();
+                    }
+                    response.object = true;
+                } catch (Throwable e) {
+                    response.error = e;
                 }
                 break;
             case FILE_ON_DISK:
-                if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+                try {
                     File fileOnDisk = new File(getFileOnDiskPath(name));
                     if (fileOnDisk.exists()) {
                         fileOnDisk.delete();
                     }
-                } else {
-                    Utils.logError("No SDCard");
+                    response.object = true;
+                } catch (Throwable e) {
+                    response.error = e;
                 }
                 break;
             case SHARED_PREFERENCE:
             default:
-                SharedPreferences sharedPreferences = EasyCacheManager.getInstance().getContext().getSharedPreferences(name, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.clear();
-                Utils.apply(editor);
+                try {
+                    SharedPreferences sharedPreferences = EasyCacheManager.getInstance().getContext().getSharedPreferences(name, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.clear();
+                    Utils.apply(editor);
+                    response.object = true;
+                } catch (Throwable e) {
+                    response.error = e;
+                }
                 break;
         }
-
+        return response;
     }
 
     private static String getFileInAppPath(String name) {
@@ -244,42 +258,5 @@ public class CacheHelper {
         return Environment.getExternalStorageDirectory().getPath() + File.separator + Utils.TAG + File.separator + EasyCacheManager.getInstance().getContext().getPackageName().replaceAll("\\.", "_") + File.separator + name;
     }
 
-
-    public static void clear(Class<?> clazz, Type type) {
-        String name = getCacheName(clazz);
-        clear(name, type);
-    }
-
-    /**
-     * 获取文件名，如果没有指定，则以类名代替
-     */
-    public static String getCacheName(Class<?> clazz) {
-        String name = "";
-        if (clazz.getAnnotation(EasyCache.class) != null) {
-            EasyCache easyCache = clazz.getAnnotation(EasyCache.class);
-            name = easyCache.name();
-        }
-        if (TextUtils.isEmpty(name)) {
-            name = clazz.getSimpleName();
-        }
-        return name;
-    }
-
-    /**
-     * 获取存储类型，如果没有指定，则默认SHARED_PREFERENCE
-     */
-    public static Type getCacheType(Class<?> clazz) {
-        Type type = null;
-        if (clazz.getAnnotation(EasyCache.class) != null) {
-            EasyCache easyCache = clazz.getAnnotation(EasyCache.class);
-            type = easyCache.type();
-        }
-
-        if (type == null) {
-            type = Type.SHARED_PREFERENCE;
-        }
-
-        return type;
-    }
 
 }

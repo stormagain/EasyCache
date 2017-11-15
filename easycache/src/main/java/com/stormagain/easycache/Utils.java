@@ -2,7 +2,6 @@ package com.stormagain.easycache;
 
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -33,10 +32,6 @@ final class Utils {
     }
 
     public static Gson gson = new Gson();
-
-    public static void logError(String msg) {
-        Log.e(TAG, msg);
-    }
 
     public static void apply(SharedPreferences.Editor editor) {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {

@@ -23,23 +23,23 @@ Step2:Config your interface (annotation EasyCache also can be skipped)
     @EasyCache(name = "example", type = Type.SHARED_PREFERENCE)
     public interface ExampleProxy {
 
-       @Cache
-       void cacheStudent(@Key("student") Student student);
+        @Cache
+        boolean cacheStudent(@Key("student") Student student);
 
-       @LoadCache(key = "student")
-       Observable<Student> loadStudent();
+        @LoadCache(key = "student")
+        Observable<Student> loadStudent();
 
-       @RemoveKey({"student", "students"})
-       void removeStudent();
+        @RemoveKey({"student", "students"})
+        void removeStudent();
 
-       @Clear
-       void clearExample();
+        @Clear
+        void clearExample();
 
-       @Cache
-       void cacheStudents(@Key("students") HashSet<Student> students);
+        @Cache
+        Observable<Boolean> cacheStudents(@Key("students") HashSet<Student> students);
 
-       @LoadCache(key = "students")
-       HashSet<Student> loadStudents();
+        @LoadCache(key = "students")
+        HashSet<Student> loadStudents();
 
     }
 
@@ -67,7 +67,7 @@ Step3:cache or loadCache
                 new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-
+                        throwable.printStackTrace();
                     }
                 }
         );
@@ -77,7 +77,21 @@ Step3:cache or loadCache
         students.add(student);
         students.add(student1);
 
-        exampleProxy.cacheStudents(students);
+        exampleProxy.cacheStudents(students).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(
+                new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) throws Exception {
+
+                    }
+                },
+                new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        throwable.printStackTrace();
+                    }
+                }
+        );
+
         HashSet<Student> set = exampleProxy.loadStudents();
         for (Student s : set) {
             Log.d("Student", "student:" + s.name + " " + s.age);

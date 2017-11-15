@@ -13,6 +13,7 @@ public final class EasyCacheManager {
     private static volatile EasyCacheManager manager;
     private Context mContext;
     private CacheProxy cacheProxy;
+    private Interceptor interceptor;
 
     public static EasyCacheManager getInstance() {
         if (manager == null) {
@@ -28,6 +29,7 @@ public final class EasyCacheManager {
     private EasyCacheManager() {
         super();
         cacheProxy = new CacheProxy();
+        interceptor = new DefaultInterceptor();
     }
 
     public void setup(Context context) {
@@ -51,5 +53,13 @@ public final class EasyCacheManager {
 
     public <T> T create(Class<T> clazz) {
         return cacheProxy.create(clazz);
+    }
+
+    public void setInterceptor(Interceptor interceptor) {
+        this.interceptor = interceptor;
+    }
+
+    public Interceptor getInterceptor() {
+        return interceptor;
     }
 }

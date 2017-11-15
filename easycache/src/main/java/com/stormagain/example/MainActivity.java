@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-
+                        throwable.printStackTrace();
                     }
                 }
         );
@@ -70,7 +70,21 @@ public class MainActivity extends AppCompatActivity {
         students.add(student);
         students.add(student1);
 
-        exampleProxy.cacheStudents(students);
+        exampleProxy.cacheStudents(students).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(
+                new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) throws Exception {
+
+                    }
+                },
+                new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        throwable.printStackTrace();
+                    }
+                }
+        );
+
         HashSet<Student> set = exampleProxy.loadStudents();
         for (Student s : set) {
             Log.d("Student", "student:" + s.name + " " + s.age);

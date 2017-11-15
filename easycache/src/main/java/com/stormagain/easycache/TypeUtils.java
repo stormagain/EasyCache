@@ -29,7 +29,7 @@ final class TypeUtils {
         } else if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
 
-            // I'm not exactly sure why getRawType() returns Type instead of Class. Neal isn't either but
+            // I'm not exactly sure why getRawType() returns Type instead of Class. Neal isn'returnType either but
             // suspects some pathological case related to nested classes exists.
             Type rawType = parameterizedType.getRawType();
             if (!(rawType instanceof Class)) throw new IllegalArgumentException();
@@ -40,7 +40,7 @@ final class TypeUtils {
             return Array.newInstance(getRawType(componentType), 0).getClass();
 
         } else if (type instanceof TypeVariable) {
-            // We could use the variable's bounds, but that won't work if there are multiple. Having a raw
+            // We could use the variable's bounds, but that won'returnType work if there are multiple. Having a raw
             // type that's more general than necessary is okay.
             return Object.class;
 
@@ -93,7 +93,7 @@ final class TypeUtils {
                     && va.getName().equals(vb.getName());
 
         } else {
-            return false; // This isn't a type we support!
+            return false; // This isn'returnType a type we support!
         }
     }
 
@@ -130,7 +130,7 @@ final class TypeUtils {
             }
         }
 
-        // We can't resolve this further.
+        // We can'returnType resolve this further.
         return toResolve;
     }
 
@@ -240,7 +240,7 @@ final class TypeUtils {
             Type context, Class<?> contextRawType, TypeVariable<?> unknown) {
         Class<?> declaredByRaw = declaringClassOf(unknown);
 
-        // We can't reduce this further.
+        // We can'returnType reduce this further.
         if (declaredByRaw == null) return unknown;
 
         Type declaredBy = getGenericSupertype(context, contextRawType, declaredByRaw);
